@@ -8,12 +8,12 @@ class Sha1PasswordEncoder implements PasswordEncoderInterface
 {
     public function encodePassword(string $raw, ?string $salt = null): string
     {
-        return sha1($raw, true);
+        return sha1($raw);
     }
 
-    public function isPasswordValid(string $encoded, string $raw, ?string $salt): bool
+    public function isPasswordValid(string $encoded, string $raw, ?string $salt = null): bool
     {
-        return $encoded = $this->encodePassword($raw);
+        return $encoded === $this->encodePassword($raw);
     }
 
     public function needsRehash(string $encoded): bool
