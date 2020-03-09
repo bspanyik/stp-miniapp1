@@ -34,6 +34,32 @@ class UserFixtures extends Fixture
 
         $manager->persist($user);
 
+        $user = new User;
+        $user
+            ->setName('Lajos')
+            ->setActive(false)
+            ->setPassword(addslashes($this->passwordEncoder->encodePassword('abc123')))
+            ->setRFID(uniqid())
+            ->setCompany('Lajoska Bt.')
+            ->setAddress('1169 Bp. Kökörcsin utca 9.')
+            ->setComment('lótifuti')
+        ;
+
+        $manager->persist($user);
+
+        $user = new User;
+        $user
+            ->setName('Péter')
+            ->setActive(true)
+            ->setPassword(addslashes($this->passwordEncoder->encodePassword('stp123')))
+            ->setRFID(uniqid())
+            ->setCompany('Oximoron Kft.')
+            ->setAddress('1191 Budapest Dunno közöm 0.')
+            ->setComment('boss')
+        ;
+
+        $manager->persist($user);
+
         $manager->flush();
     }
 }
