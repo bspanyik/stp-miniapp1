@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -38,14 +40,14 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * 
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=40, options={"fixed":true})
      */
     private $password;
 
     /**
      * @var string
      * 
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      */
     private $RFID;
 
@@ -69,6 +71,16 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $comment;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Data", mappedBy="rfid", orphanRemoval=true)
+     */
+    private $data;
+
+    public function __construct()
+    {
+        $this->data = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,7 +143,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getActive(): bool
+    public function isActive(): bool
     {
         return $this->active;
     }
@@ -206,5 +218,36 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Data[]
+     */
+    public function getData(): Collection
+    {
+        return $this->data;
+    }
+
+    public function addData(Data $data): self
+    {
+        if (!$this->data->contains($data)) {
+            $this->data[] = $data;
+            $data->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeData(Data $data): self
+    {
+        if ($this->data->contains($data)) {
+            $this->data->removeElement($data);
+            // set the owning side to null (unless already changed)
+            if ($data->getUser() === $this) {
+                $data->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
